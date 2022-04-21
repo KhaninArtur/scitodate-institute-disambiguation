@@ -27,7 +27,7 @@ def main():
     known_args, _ = parser.parse_known_args()
 
     spark = SparkSession.builder.getOrCreate()
-    df = spark.read.csv(known_args.input, schema='uni string').limit(10 ** 5)
+    df = spark.read.csv(known_args.input, schema='uni string')
 
     # Preprocessing
     df = df.withColumn('processed', funcs.lower(df.uni))  # make text lowercase
