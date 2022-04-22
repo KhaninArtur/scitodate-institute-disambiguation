@@ -51,13 +51,13 @@ def main():
     # Calculating of Bigrams with the most valuable words
     tfidf = tfidf.withColumn('key', extract_values_from_vector_udf(tfidf['idf']))
     tfidf = tfidf.filter(funcs.size(tfidf['key']) > 0)
-    tfidf = tfidf.withColumn('min_ind', max_index_udf(tfidf['key']))
-    tfidf = tfidf.withColumn('second_min_ind', second_max_index_udf(tfidf['key']))
-    tfidf = tfidf.withColumn('min_word', funcs.concat_ws(
-        ' ', tfidf['no_stop_words_token'][tfidf['min_ind']], tfidf['no_stop_words_token'][tfidf['second_min_ind']]
+    tfidf = tfidf.withColumn('max_ind', max_index_udf(tfidf['key']))
+    tfidf = tfidf.withColumn('second_max_ind', second_max_index_udf(tfidf['key']))
+    tfidf = tfidf.withColumn('max_word', funcs.concat_ws(
+        ' ', tfidf['no_stop_words_token'][tfidf['max_ind']], tfidf['no_stop_words_token'][tfidf['second_max_ind']]
     ))
     # MD5 hash of Bigrams acts as ID of the cluster
-    tfidf = tfidf.withColumn('result_id', funcs.md5(tfidf['min_word']))
+    tfidf = tfidf.withColumn('result_id', funcs.md5(tfidf['max_word']))
 
     # Saving of the result
     tfidf.select('uni', 'result_id').write.csv(known_args.output)
